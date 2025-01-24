@@ -38,10 +38,25 @@ If you have nodejs installed, proceed with the following steps to run the applic
 5. **Install the dependencies:**
 
     ```bash
-   nodemon server.js
+   npm install
 
 6. **Run the backend:**
 
     ```bash
-    mvn spring-boot:run
+    nodemon server.js
+    
+7. **Access the admin folder in terminal:**
+
+    ```bash
+    cd admin
+    
+8. **Install the dependencies:**
+
+    ```bash
+   npm install
+
+9. **Run the admin:**
+
+    ```bash
+    npm run dev
 ___
