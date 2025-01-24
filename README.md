@@ -6,15 +6,9 @@
 
 
 **Prerequisites:**
-Before running the app, make sure you have the following installed:
-
-1. Node.js (for the frontend)<br>
-2. Yarn (for package management)<br>
-3. Java Development Kit (JDK) (for running Spring Boot)<br>
-4. Maven (for building and running the backend)<br>
 
 <br>
-If you have all these installed, proceed with the following steps to run the application:
+If you have nodejs installed, proceed with the following steps to run the application:
 
 
 
