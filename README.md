@@ -19,26 +19,26 @@ If you have nodejs installed, proceed with the following steps to run the applic
 2. **Access the frontend folder in terminal:**
 
     ```bash
-   cd client
+   cd frontend
 3. **Install the dependencies:**
 
     ```bash
-   yarn install
+   npm install
 
 4. **Run the frontend:**
 
     ```bash
-    yarn start
+    npm run dev
 
 5. **Access the backend folder in new terminal:**
 
     ```bash
-   cd server
+   cd backend
 
 5. **Install the dependencies:**
 
     ```bash
-   mvn clean install
+   nodemon server.js
 
 6. **Run the backend:**
 
