@@ -2,6 +2,8 @@
 
 import jwt from 'jsonwebtoken'
 
+const getJwtSecret = () => process.env.JWT_SECRET || process.env.jwt_secret
+
 const adminAuth = async (req, res, next) => {
     try {
         const { token } = req.headers
@@ -9,8 +11,8 @@ const adminAuth = async (req, res, next) => {
             return res.json({ success: false, message: "Not Authorized Login Again" })
 
         }
-        const token_decode = jwt.verify(token, process.env.jwt_secret)
-        if (token_decode !== process.env.admin_email + process.env.admin_password) {
+        const token_decode = jwt.verify(token, getJwtSecret())
+        if (token_decode?.role !== "admin" || token_decode?.email !== process.env.admin_email) {
             return res.json({ success: false, message: "Not Authorized Login Again" })
         }
 
