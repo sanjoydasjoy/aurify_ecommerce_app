@@ -2,12 +2,42 @@ import React, { useContext, useEffect, useState } from "react";
 import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const Orders = () => {
 
     const { backendUrl, token, currency } = useContext(ShopContext)
 
     const [orderData, setorderData] = useState([])
+
+    const verifyStripePayment = async () => {
+        const params = new URLSearchParams(window.location.search)
+        const sessionId = params.get("session_id")
+        const orderId = params.get("orderId")
+        const status = params.get("stripe")
+
+        if (!token || !sessionId || !orderId || status !== "success") {
+            return
+        }
+
+        try {
+            const response = await axios.post(
+                backendUrl + '/api/order/verifystripe',
+                { orderId, sessionId },
+                { headers: { token } }
+            )
+
+            if (response.data.success) {
+                toast.success("Stripe payment verified")
+            } else {
+                toast.error(response.data.message)
+            }
+
+            window.history.replaceState({}, "", "/orders")
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
 
     const loadOrderData = async () => {
         try {
@@ -36,6 +66,7 @@ const Orders = () => {
     }
 
     useEffect(() => {
+        verifyStripePayment()
         loadOrderData()
     }, [token])
 
