@@ -3,8 +3,10 @@ import validator from "validator";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 
+const getJwtSecret = () => process.env.JWT_SECRET || process.env.jwt_secret
+
 const createToken = (id) => {
-    return jwt.sign({ id }, process.env.jwt_secret)
+    return jwt.sign({ id }, getJwtSecret())
 }
 
 
@@ -88,7 +90,7 @@ const adminLogin = async (req, res) => {
     try{
         const {email,password} = req.body
         if(email === process.env.admin_email && password === process.env.admin_password){
-            const token = jwt.sign(email+password,process.env.jwt_secret)
+            const token = jwt.sign({ role: "admin", email }, getJwtSecret())
             res.json({success:true,token})
         }
         else{
