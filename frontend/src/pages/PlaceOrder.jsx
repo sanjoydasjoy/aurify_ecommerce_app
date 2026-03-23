@@ -3,12 +3,11 @@ import Title from "../components/Title";
 import CartTotal from "../components/CartTotal";
 import { ShopContext } from "../context/ShopContext";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const PlaceOrder = () => {
     const [method, setMethod] = useState("cod");
-    const [pin, setPin] = useState("");
-    const [balance, setBalance] = useState(null);
-    const [error, setError] = useState("");
+    const [mockStatus, setMockStatus] = useState("success");
     const { navigate, backendUrl, token, cartItems, setCartItems, getCartAmount, delivery_fee, products } =
         useContext(ShopContext);
     const [formData, setFormData] = useState({
@@ -28,15 +27,6 @@ const PlaceOrder = () => {
         const value = event.target.value;
 
         setFormData((data) => ({ ...data, [name]: value }));
-    };
-
-    const handlePinSubmit = () => {
-        if (pin === "1234") { // Example PIN logic
-            setBalance(5000); // Example balance
-            setError("");
-        } else {
-            setError("Invalid PIN. Please try again.");
-        }
     };
 
     const onSubmitHandler = async (event) => {
@@ -72,17 +62,29 @@ const PlaceOrder = () => {
                         toast.error(response.data.message);
                     }
                     break;
-                case "bank":
-                    if (balance >= getCartAmount() + delivery_fee) {
+                case "mock":
+                    const mockResponse = await axios.post(backendUrl + "/api/order/mock", {
+                        ...orderData,
+                        simulateStatus: mockStatus,
+                    }, {
+                        headers: { token },
+                    });
+
+                    if (mockResponse.data.success) {
                         setCartItems({});
+                        toast.success(mockResponse.data.message);
                         navigate("/orders");
                     } else {
-                        toast.error("Insufficient balance.");
+                        toast.error(mockResponse.data.message || "Mock payment failed");
                     }
+                    break;
+                default:
+                    toast.error("Please select a valid payment method");
                     break;
             }
         } catch (error) {
             console.error(error);
+            toast.error(error.message);
         }
     };
 
@@ -195,26 +197,15 @@ const PlaceOrder = () => {
                     {/* Payment Methods Selection */}
                     <div className="flex gap-3 flex-col lg:flex-row">
                         <div
-                            onClick={() => setMethod("bank")}
+                            onClick={() => setMethod("mock")}
                             className="flex items-center gap-3 border p-2 px-3 cursor-pointer"
                         >
                             <p
                                 className={`min-w-3.5 h-3.5 border rounded-full ${
-                                    method === "bank" ? "bg-green-400" : ""
+                                    method === "mock" ? "bg-green-400" : ""
                                 }`}
                             ></p>
-                            <span className="text-purple-500 font-bold mx-4">Bank</span>
-                        </div>
-                        <div
-                            onClick={() => setMethod("bkash")}
-                            className="flex items-center gap-3 border p-2 px-3 cursor-pointer"
-                        >
-                            <p
-                                className={`min-w-3.5 h-3.5 border rounded-full ${
-                                    method === "bkash" ? "bg-green-400" : ""
-                                }`}
-                            ></p>
-                            <span className="text-pink-500 font-bold mx-4">BKash</span>
+                            <span className="text-indigo-600 font-bold mx-4">Mock Payment</span>
                         </div>
                         <div
                             onClick={() => setMethod("cod")}
@@ -228,51 +219,31 @@ const PlaceOrder = () => {
                             <p className="text-gray-500 text-sm font-medium mx-4">CASH ON DELIVERY</p>
                         </div>
                     </div>
-                    {method === "bank" && (
-                        <div className="mt-4">
-                            {balance === null ? (
-                                <>
+                    {method === "mock" && (
+                        <div className="mt-4 border rounded p-3">
+                            <p className="text-sm text-gray-600 mb-3">Demo mode: choose gateway outcome</p>
+                            <div className="flex gap-4 text-sm">
+                                <label className="flex items-center gap-2 cursor-pointer">
                                     <input
-                                        type="password"
-                                        placeholder="Enter PIN"
-                                        className="border rounded p-2 w-full"
-                                        value={pin}
-                                        onChange={(e) => setPin(e.target.value)}
+                                        type="radio"
+                                        name="mockStatus"
+                                        value="success"
+                                        checked={mockStatus === "success"}
+                                        onChange={(e) => setMockStatus(e.target.value)}
                                     />
-                                    <button
-                                        type="button"
-                                        className="bg-blue-500 text-white mt-2 px-4 py-2"
-                                        onClick={handlePinSubmit}
-                                    >
-                                        Submit PIN
-                                    </button>
-                                    {error && <p className="text-red-500 mt-2">{error}</p>}
-                                </>
-                            ) : (
-                                <div className="mt-4">
-                                    <p>
-                                        Your current balance is <b>BDT {balance}</b>.
-                                    </p>
-                                    <p>
-                                        Your purchase amount is <b>BDT {getCartAmount() + delivery_fee}</b>.
-                                    </p>
-                                    <p>
-                                        Remaining balance will be{" "}
-                                        <b>BDT {balance - (getCartAmount() + delivery_fee)}</b>.
-                                    </p>
-                                    <button
-                                        type="button"
-                                        className="bg-green-500 text-white mt-4 px-4 py-2"
-                                        onClick={() => {
-                                            setBalance(null);
-                                            setPin("");
-                                            setError("");
-                                        }}
-                                    >
-                                        Confirm
-                                    </button>
-                                </div>
-                            )}
+                                    Simulate Success
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input
+                                        type="radio"
+                                        name="mockStatus"
+                                        value="failed"
+                                        checked={mockStatus === "failed"}
+                                        onChange={(e) => setMockStatus(e.target.value)}
+                                    />
+                                    Simulate Failure
+                                </label>
+                            </div>
                         </div>
                     )}
                     <div className="w-full text-end mt-8">
