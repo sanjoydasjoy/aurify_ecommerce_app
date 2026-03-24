@@ -7,11 +7,13 @@ import { assets } from "../assets/assets";
 
 const Orders = ({ token }) => {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchAllOrders = async () => {
     if (!token) return;
 
     try {
+      setLoading(true);
       const response = await axios.post(
         `${backendURL}/api/order/list`,
         {},
@@ -25,6 +27,8 @@ const Orders = ({ token }) => {
       }
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -59,14 +63,17 @@ const Orders = ({ token }) => {
 
   return (
     <div className="pt-16">
-      <div className="border-t">
+      <div className="border-t border-slate-200">
         <Title text1={"MY"} text2={"ORDERS"} />
       </div>
 
-      {orders.map((order, index) => (
+      {loading && <p className="text-sm text-slate-500 py-4">Loading orders...</p>}
+      {!loading && !orders.length && <p className="text-sm text-slate-500 py-4">No orders found.</p>}
+
+      {!loading && orders.map((order, index) => (
         <div
           key={index}
-          className="grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_1fr_1fr] gap-3 items-start border-2 border-gray-200 p-5 md:p-8 my-3 md:my-4 text-xs sm:text-sm text-gray-700"
+          className="admin-card grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_1fr_1fr] gap-3 items-start border border-gray-200 p-5 md:p-8 my-3 md:my-4 text-xs sm:text-sm text-gray-700 rounded-2xl"
         >
           {/* Parcel Icon */}
           <div>
@@ -115,7 +122,7 @@ const Orders = ({ token }) => {
             <select
               onChange={(event) => statusHandler(event, order._id)}
               value={order.status}
-              className="p-2 font-bold"
+              className="p-2 font-semibold rounded-lg border border-slate-300 bg-white"
             >
               <option value="Order Placed">Order Placed</option>
               <option value="Packing">Packing</option>

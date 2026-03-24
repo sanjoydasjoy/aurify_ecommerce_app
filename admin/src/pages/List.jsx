@@ -6,9 +6,11 @@ import { toast } from 'react-toastify'
 const List = ({token}) => {
 
   const [list, setList] = useState([])
+  const [loading, setLoading] = useState(false)
 
   const fetchList = async () => {
     try {
+      setLoading(true)
 
       const response = await axios.get(backendURL + '/api/product/list')
       if (response.data.success) {
@@ -22,11 +24,15 @@ const List = ({token}) => {
       console.log(error);
       toast.error(error.message)
 
+    } finally {
+      setLoading(false)
     }
   }
 
   const removeProduct = async (id) => {
     try {
+      if (!window.confirm('Remove this product from catalog?')) return
+
       const response = await axios.post(backendURL + '/api/product/remove', {id}, {headers: {token}})
 
       if(response.data.success){
@@ -48,12 +54,13 @@ const List = ({token}) => {
 
   return (
     <>
-      <p className='mb-2'>All Products List</p>
+      <div className='admin-card rounded-2xl p-5 sm:p-6'>
+      <p className='mb-4 text-lg font-semibold text-slate-800'>All Products List</p>
       <div className='flex flex-col gap-2'>
 
 
 
-        <div className='hidden md:grid grid-cols-[1fr_3fr_1fr_1fr_1fr] item-center py-1 px-2 border bg-gray-10 text-sm' >
+        <div className='hidden md:grid grid-cols-[1fr_3fr_1fr_1fr_1fr] item-center py-2 px-3 border border-slate-200 bg-slate-50 text-sm rounded-lg' >
           <b>Image</b>
           <b>Name</b>
           <b>Category</b>
@@ -61,19 +68,24 @@ const List = ({token}) => {
           <b className='text-center'>Action</b>
         </div>
 
+      {loading && <p className='text-sm text-slate-500 py-4'>Loading products...</p>}
+
+      {!loading && !list.length && <p className='text-sm text-slate-500 py-4'>No products found.</p>}
+
       {
-        list.map((item, index)=> (
-          <div className='grid grid-cols-[1fr_3fr_1fr] md:grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center gap-2 py-1 px-2 border text-sm' key={index}>
-            <img className='w-12' src={item.image[0]} alt="" />
+        !loading && list.map((item)=> (
+          <div className='grid grid-cols-[1fr_3fr_1fr] md:grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center gap-2 py-2 px-3 border border-slate-200 rounded-lg text-sm' key={item._id}>
+            <img className='w-12 h-12 object-cover rounded-md border border-slate-200' src={item.image?.[0]} alt="" />
             <p>{item.name}</p>
             <p>{item.category}</p>
             <p>{currency}{item.price}</p>
-            <p onClick={()=>removeProduct(item._id)} className='text-right md:text-center cursor-pointer text-lg'>X</p>
+            <button onClick={()=>removeProduct(item._id)} className='text-right md:text-center cursor-pointer text-sm text-rose-600 font-medium'>Remove</button>
           </div>
         ))
-      }  
+      }
 
       </div >
+      </div>
     </>
   )
 }

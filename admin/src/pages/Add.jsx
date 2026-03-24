@@ -18,11 +18,33 @@ const Add = ({ token }) => {
   const [subCategory, setSubCategory] = useState("Topwear");
   const [bestseller, setBestseller] = useState(false);
   const [sizes, setSizes] = useState([]);
+  const [submitting, setSubmitting] = useState(false)
 
   const onSubmitHandler = async (e) => {
     e.preventDefault()
 
     try {
+      if (!token) {
+        toast.error('Session expired. Please login again.')
+        return
+      }
+
+      if (!image1 && !image2 && !image3 && !image4) {
+        toast.error('Please upload at least one product image')
+        return
+      }
+
+      if (!sizes.length) {
+        toast.error('Select at least one size')
+        return
+      }
+
+      if (Number(price) <= 0) {
+        toast.error('Price must be greater than 0')
+        return
+      }
+
+      setSubmitting(true)
 
       const formData = new FormData()
 
@@ -52,6 +74,8 @@ const Add = ({ token }) => {
         setImage3(false)
         setImage4(false)
         setPrice('')
+        setSizes([])
+        setBestseller(false)
       } else {
         toast.error(response.data.message)
       }
@@ -62,11 +86,14 @@ const Add = ({ token }) => {
     } catch (error) {
         console.log(error)
         toast.error(error.message)
+    } finally {
+      setSubmitting(false)
     }
   }
 
   return (
-    <form onSubmit={onSubmitHandler} className='flex flex-col w-full items-start gap-3'>
+    <form onSubmit={onSubmitHandler} className='admin-card flex flex-col w-full items-start gap-4 p-5 sm:p-6 rounded-2xl'>
+      <h2 className='text-lg font-semibold text-slate-800'>Add New Product</h2>
       <div>
         <p className='mb-2'>Upload Image</p>
 
@@ -119,7 +146,7 @@ const Add = ({ token }) => {
         </div>
         <div>
           <p className='mb-2'>Product Price</p>
-          <input onChange={(e) => setPrice(e.target.value)} value={price} className='w-full px-3 py-2 sm:w-[120px]' type="Number" placeholder='25' />
+          <input onChange={(e) => setPrice(e.target.value)} value={price} className='w-full px-3 py-2 sm:w-[120px]' type="number" min='1' placeholder='25' />
         </div>
       </div>
 
@@ -139,7 +166,7 @@ const Add = ({ token }) => {
             <p className={`${sizes.includes("XL") ? "bg-pink-100" : "bg-slate-200"} px-3 py-1 cursor-pointer`}>XL</p>
           </div>
           <div onClick={() => setSizes(prev => prev.includes("XXL") ? prev.filter(item => item !== "XXL") : [...prev, "XXL"])}>
-            <p className={`${sizes.includes("XXL") ? "bg-pink-100" : "bg-slate-200"} px-3 py-1 cursor-pointer`}>XXl</p>
+            <p className={`${sizes.includes("XXL") ? "bg-pink-100" : "bg-slate-200"} px-3 py-1 cursor-pointer`}>XXL</p>
           </div>
         </div>
       </div>
@@ -149,7 +176,9 @@ const Add = ({ token }) => {
         <label className='cursor-pointer' htmlFor="bestseller">Add to bestseller</label>
       </div>
 
-      <button type='submit' className='w-28 py-3 mt-4 bg-black text-white'>ADD</button>
+      <button disabled={submitting} type='submit' className='w-36 py-3 mt-4 admin-btn-solid rounded-lg disabled:opacity-70'>
+        {submitting ? 'ADDING...' : 'ADD PRODUCT'}
+      </button>
 
     </form>
 
