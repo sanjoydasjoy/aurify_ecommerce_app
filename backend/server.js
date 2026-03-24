@@ -12,6 +12,7 @@ import aiRouter from './routes/aiRoute.js'
 //App config
 const app = express()
 const port = process.env.PORT || 4000
+const host = '0.0.0.0'
 let dbReady = false
 let cloudinaryReady = false
 
@@ -71,4 +72,4 @@ app.get('/favicon.ico', (req, res) => {
     res.status(204).end()
 })
 
-app.listen(port,()=> console.log(`Server is listening from port ${port}`)) 
+app.listen(port, host, () => console.log(`Server is listening on ${host}:${port}`))
