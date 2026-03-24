@@ -49,31 +49,33 @@ const Login = () =>{
         }
     },[token])
     return(
-        <form onSubmit={onSubmitHandler} className="flex flex-col items-center w-[90%] sm:max-w-96 m-auto mt-14 gap-4 text-gray-800">
+        <div className="py-10 sm:py-16">
+        <form onSubmit={onSubmitHandler} className="elev-card flex flex-col items-center w-[95%] sm:max-w-md m-auto p-6 sm:p-8 gap-4 text-gray-800">
 
             <div className="inline-flex items-center gap-2 mb-2 mt-10">
 
-                <p className="prata-regular text-3xl">{currentState}</p>
-                <hr className="border-none h-[1.5px" w-8 bg-gray-800 />
+                <p className="prata-regular text-3xl text-[#17212f]">{currentState}</p>
+                <hr className="border-none h-[2px] w-10 bg-gradient-to-r from-[#17212f] to-[#c6a16e]" />
 
             </div>
 
-            {currentState === 'Login' ? '' : <input onChange={(e)=>setName(e.target.value)} value={name} type="text" className="w-full px-3 py-2 border border-gray-800" placeholder="Name" required/> }
-            <input onChange={(e)=>setEmail(e.target.value)} value={email} type="email" className="w-full px-3 py-2 border border-gray-800" placeholder="Email" required/>
-            <input onChange={(e)=>setPassword(e.target.value)} value={password} type="password" className="w-full px-3 py-2 border border-gray-800" placeholder="Password" required/>
+            {currentState === 'Login' ? '' : <input onChange={(e)=>setName(e.target.value)} value={name} type="text" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white" placeholder="Name" required/> }
+            <input onChange={(e)=>setEmail(e.target.value)} value={email} type="email" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white" placeholder="Email" required/>
+            <input onChange={(e)=>setPassword(e.target.value)} value={password} type="password" className="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white" placeholder="Password" required/>
 
             <div className="w-full flex justify-between text-sm mt-[-8px]"> 
-                <p className="cursor-pointer">Forgot your password?</p>
+                <p className="cursor-pointer text-gray-500 hover:text-black">Forgot your password?</p>
                 {
                     currentState === 'Login' 
-                    ? <p onClick={()=>setCurrentState('Sign Up')} className="cursor-pointer">Create Account</p>
-                    : <p onClick={()=>setCurrentState('Login')} className="cursor-pointer">Login Here</p>
+                    ? <p onClick={()=>setCurrentState('Sign Up')} className="cursor-pointer text-[#17212f] font-medium">Create Account</p>
+                    : <p onClick={()=>setCurrentState('Login')} className="cursor-pointer text-[#17212f] font-medium">Login Here</p>
                 }
             </div>
 
-            <button className="bg-black text-white font-light px-8 py-2 mt-4">{currentState === 'Login'? 'Login' : 'Sign Up'}</button>
+            <button className="btn-primary font-light px-10 py-2.5 mt-4">{currentState === 'Login'? 'Login' : 'Sign Up'}</button>
 
         </form>
+        </div>
     )
 } 
 

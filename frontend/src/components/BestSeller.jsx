@@ -14,11 +14,11 @@ const BestSeller = () => {
 
     // adding this }, [products]) is because when the function is executed productes will be updated
     return (
-        <div className='my-10'>
-            <div className='text-center text-3xl py-8'>
+        <section className='my-16'>
+            <div className='best-seller-banner text-center text-3xl py-8 px-5 sm:px-8 mb-6 rounded-[22px] border border-[#dbc8b2] bg-gradient-to-r from-[#f6ebdd] to-[#f1e2d1]'>
                 <Title text1={'BEST'} text2={'SELLERS'} />
-                <p className='w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600'>
-                Aurify is an clothing app offering the latest fashion collections with seamless shopping and a user-friendly interface
+                <p className='section-subtitle w-11/12 sm:w-3/4 m-auto text-xs sm:text-sm md:text-base leading-7'>
+                Our most-loved pieces, selected for fit, premium finishing, and all-day elegance.
                 </p>
             </div>
             {/*Rendering Products*/}
@@ -29,7 +29,7 @@ const BestSeller = () => {
                     ))
                 }
             </div>
-        </div>
+        </section>
     )
 }
 

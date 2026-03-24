@@ -16,11 +16,11 @@ const LatestCollection = () => {
 
 
     return (
-        <div className='my-10'>
-            <div className='text-center py-8 text-3xl'>
+        <section className='my-16'>
+            <div className='surface-card text-center py-8 px-5 sm:px-8 text-3xl mb-6'>
                 <Title text1={'LATEST'} text2={'COLLECTIONS'} />
-                <p className='w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600'>
-                    Aurify is an clothing app offering the latest fashion collections with seamless shopping and a user-friendly interface
+                <p className='section-subtitle w-11/12 sm:w-3/4 m-auto text-xs sm:text-sm md:text-base text-[#5e6b80] leading-7'>
+                    Signature drops inspired by contemporary tailoring, quiet luxury textures, and wearable confidence.
                 </p>
             </div>
             {/*Rendering Products*/}
@@ -31,7 +31,7 @@ const LatestCollection = () => {
                     ))
                 }
             </div>
-        </div>
+        </section>
     )
 }
 
