@@ -4,7 +4,7 @@ import {useState} from 'react'
 import { backendURL } from '../App'
 import { toast } from 'react-toastify'
 
-const Login = ({ setToken, backendStatus, onRetryHealthCheck }) => {
+const Login = ({ setToken }) => {
 
     const [email,setEmail] = useState('')
     const [password,setPassword] = useState('')
@@ -39,24 +39,11 @@ const Login = ({ setToken, backendStatus, onRetryHealthCheck }) => {
         }
     }
 
-    const backendLabel =
-        backendStatus === 'connected'
-            ? 'Backend connected'
-            : backendStatus === 'disconnected'
-                ? 'Backend disconnected'
-                : backendStatus === 'missing'
-                    ? 'Missing backend URL'
-                    : 'Checking backend'
-
     return (
         <div className='min-h-screen flex items-center justify-center w-full px-4'>
             <div className='admin-auth-card rounded-2xl px-6 sm:px-8 py-7 max-w-md w-full'>
                 <h1 className='text-2xl font-bold mb-1'>Admin Control Panel</h1>
                 <p className='text-sm text-slate-500 mb-4'>Sign in to manage products and orders.</p>
-                <div className='flex items-center justify-between mb-5'>
-                    <span className='status-pill status-warn text-xs'>{backendLabel}</span>
-                    <button type='button' onClick={onRetryHealthCheck} className='admin-btn-outline text-xs'>Retry</button>
-                </div>
                 <form onSubmit={onSubmitHandler}>
                     <div className='mb-3 min-w-72'>
                         <p className='text-sm font-medium text-gray-700 mb-2'>Email Address</p>

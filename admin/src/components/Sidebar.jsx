@@ -2,7 +2,7 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { assets } from '../assets/assets'
 
-const Sidebar = ({ backendStatus }) => {
+const Sidebar = () => {
     return (
         <aside className='admin-sidebar w-[250px] hidden md:block'>
             <div className='flex flex-col gap-2 p-4 text-[15px]'>
@@ -22,13 +22,6 @@ const Sidebar = ({ backendStatus }) => {
                     <img className='w-5 h-5' src={assets.order_icon} alt="" />
                     <p>Orders</p>
                 </NavLink>
-
-                <div className='mt-4 px-3'>
-                    <p className='text-[11px] uppercase tracking-[0.14em] text-slate-500'>API Status</p>
-                    <p className='text-sm mt-1 text-slate-700'>
-                        {backendStatus === 'connected' ? 'Connected' : backendStatus === 'disconnected' ? 'Disconnected' : backendStatus === 'missing' ? 'Missing URL' : 'Checking'}
-                    </p>
-                </div>
             </div>
         </aside>
     )
