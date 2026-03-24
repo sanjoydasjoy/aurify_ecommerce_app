@@ -1,4 +1,5 @@
 import userModel from "../models/userModel.js";
+import orderModel from "../models/orderModel.js";
 import validator from "validator";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
@@ -104,4 +105,57 @@ const adminLogin = async (req, res) => {
 
 }
 
-export { loginUser, registerUser, adminLogin }
+// route for fetching logged in user profile
+const getUserProfile = async (req, res) => {
+    try {
+        const { userId } = req.body
+        const user = await userModel.findById(userId).select("name email")
+
+        if (!user) {
+            return res.json({ success: false, message: "User not found" })
+        }
+
+        const [totalOrders, spendSummary, userOrders] = await Promise.all([
+            orderModel.countDocuments({ userId, payment: true }),
+            orderModel.aggregate([
+                { $match: { userId, payment: true } },
+                { $group: { _id: null, totalSpent: { $sum: "$amount" } } },
+            ]),
+            orderModel
+            .find({ userId, payment: true })
+            .sort({ date: -1 })
+            .limit(5)
+            .lean(),
+        ])
+
+        const totalSpent = Number(spendSummary?.[0]?.totalSpent || 0)
+        const memberSince = user._id.getTimestamp()
+        const lastOrderDate = userOrders[0]?.date ? new Date(userOrders[0].date) : null
+
+        const recentOrders = userOrders.map((order) => ({
+            id: order._id,
+            amount: order.amount,
+            status: order.status,
+            paymentMethod: order.paymentMethod,
+            date: order.date,
+            itemCount: Array.isArray(order.items) ? order.items.length : 0,
+        }))
+
+        res.json({
+            success: true,
+            user,
+            stats: {
+                totalOrders,
+                totalSpent,
+                memberSince,
+                lastOrderDate,
+            },
+            recentOrders,
+        })
+    } catch (error) {
+        console.log(error)
+        res.json({ success: false, message: error.message })
+    }
+}
+
+export { loginUser, registerUser, adminLogin, getUserProfile }

@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken'
 
+const getJwtSecret = () => process.env.JWT_SECRET || process.env.jwt_secret
+
 const authUser = async (req, res, next) => {
 
     const { token } = req.headers;
@@ -11,7 +13,7 @@ const authUser = async (req, res, next) => {
 
     try {
 
-        const token_decode = jwt.verify(token, process.env.JWT_SECRET)
+        const token_decode = jwt.verify(token, getJwtSecret())
         req.body.userId = token_decode.id
         next()
     } catch (error) {
