@@ -121,7 +121,7 @@ const placeOrderRazorpay = async (req, res) => {
 // Placing orders using Mock Payment Method (demo only)
 const placeOrderMock = async (req, res) => {
     try {
-        const { userId, items, amount, address, simulateStatus } = req.body
+        const { userId, items, amount, address, simulateStatus, paymentMethod } = req.body
 
         if (!Array.isArray(items) || items.length === 0) {
             return res.json({ success: false, message: "No items found in order" })
@@ -137,7 +137,7 @@ const placeOrderMock = async (req, res) => {
             items,
             address,
             amount,
-            paymentMethod: "Mock Payment",
+            paymentMethod: paymentMethod || "Online Payment",
             payment: true,
             date: Date.now()
         }
@@ -147,7 +147,7 @@ const placeOrderMock = async (req, res) => {
 
         await userModel.findByIdAndUpdate(userId, { cartData: {} })
 
-        res.json({ success: true, message: "Mock payment successful. Order placed." })
+        res.json({ success: true, message: "Payment successful. Order placed." })
     } catch (error) {
         console.log(error)
         res.json({ success: false, message: error.message })
