@@ -12,8 +12,32 @@ import aiRouter from './routes/aiRoute.js'
 //App config
 const app = express()
 const port = process.env.PORT || 4000
+let dbReady = false
+let cloudinaryReady = false
+
+process.on('unhandledRejection', (reason) => {
+    console.error('Unhandled Promise Rejection:', reason)
+})
+
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error)
+})
+
 connectDB()
-connectCloudinary()
+    .then(() => {
+        dbReady = true
+    })
+    .catch((error) => {
+        console.error('Failed to connect MongoDB:', error.message)
+    })
+
+Promise.resolve(connectCloudinary())
+    .then(() => {
+        cloudinaryReady = true
+    })
+    .catch((error) => {
+        console.error('Failed to configure Cloudinary:', error.message)
+    })
 
 //middlewares
 
@@ -30,6 +54,21 @@ app.use('/api/ai',aiRouter)
 
 app.get('/',(req,res)=>{
     res.send("Api working")
+})
+
+app.get('/health', (req, res) => {
+    res.status(200).json({
+        success: true,
+        service: 'aurify-backend',
+        dbReady,
+        cloudinaryReady,
+        uptimeSeconds: Math.floor(process.uptime()),
+        timestamp: new Date().toISOString(),
+    })
+})
+
+app.get('/favicon.ico', (req, res) => {
+    res.status(204).end()
 })
 
 app.listen(port,()=> console.log(`Server is listening from port ${port}`)) 
