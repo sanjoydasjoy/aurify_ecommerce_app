@@ -1,7 +1,7 @@
 import userModel from "../models/userModel.js";
 import orderModel from "../models/orderModel.js";
 import validator from "validator";
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 
 const getJwtSecret = () => process.env.JWT_SECRET || process.env.jwt_secret
@@ -23,7 +23,7 @@ const loginUser = async (req, res) => {
             return res.json({ success: false, message: "User doesn't exists" })
         }
 
-        const isMatch = await bcrypt.compare(password, user.password)
+        const isMatch = bcrypt.compareSync(password, user.password)
 
         if (isMatch) {
             const token = createToken(user._id)
@@ -63,8 +63,8 @@ const registerUser = async (req, res) => {
         }
 
         // before storing the user in the database, we need to hash the password and store the hashed password. and for this we will use bycrypt password
-        const salt = await bcrypt.genSalt(10)
-        const hashedPassword = await bcrypt.hash(password, salt)
+        const salt = bcrypt.genSaltSync(10)
+        const hashedPassword = bcrypt.hashSync(password, salt)
 
         const newUser = new userModel({
             name,
